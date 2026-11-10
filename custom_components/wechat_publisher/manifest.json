@@ -1,0 +1,14 @@
+{
+  "domain": "wechat_publisher",
+  "name": "微信流量主",
+  "codeowners": ["@freefitter"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/freefitter/ha-wechat-publisher",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/freefitter/ha-wechat-publisher/issues",
+  "loggers": ["custom_components.wechat_publisher"],
+  "requirements": [],
+  "version": "1.0.0"
+}

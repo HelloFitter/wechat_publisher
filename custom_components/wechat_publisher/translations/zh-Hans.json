@@ -1,0 +1,138 @@
+{
+  "title": "微信流量主",
+  "config": {
+    "step": {
+      "user": {
+        "title": "添加微信流量主账号",
+        "description": "填写公众号 / 小程序的 AppID 与 AppSecret。\n\n⚠️ 请先在「微信公众平台 → 设置与开发 → 基本配置 → IP 白名单」中加入运行 Home Assistant 的服务器出口 IP。刚才被微信检测到的 IP 是：**{ip}**\n\n小程序与公众号都可以添加，每个账号添加一次即可重复。",
+        "data": {
+          "account_name": "账号名称（自定义）",
+          "account_type": "账号类型",
+          "appid": "AppID",
+          "appsecret": "AppSecret"
+        },
+        "data_description": {
+          "account_name": "仅用于在 Home Assistant 中区分账号，例如「我的公众号」",
+          "account_type": "公众号选「公众号」，小程序 / 小游戏选「小程序 / 小游戏」",
+          "appid": "公众平台后台「设置与开发 → 基本配置」中的 AppID",
+          "appsecret": "同一页面的 AppSecret，注意只显示一次，请妥善保存"
+        }
+      },
+      "reauth_confirm": {
+        "title": "重新授权",
+        "description": "账号 **{name}**（AppID：{appid}）的凭据已失效，请重新填写 AppSecret。\n\n如提示 IP 白名单问题，请把 **{ip}** 加入公众平台后台的 IP 白名单。",
+        "data": {
+          "appsecret": "AppSecret"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "AppID 或 AppSecret 不正确，请重新确认",
+      "invalid_ip": "服务器 IP {ip} 不在 IP 白名单中，请到公众平台后台添加后重试",
+      "not_publisher": "该账号尚未开通流量主，无法获取收益数据",
+      "rate_limited": "微信接口调用频率超限，请稍后再试",
+      "cannot_connect": "无法连接微信服务器，请检查 Home Assistant 的网络",
+      "unknown": "出现未知错误，请查看 Home Assistant 日志"
+    },
+    "abort": {
+      "already_configured": "该 AppID 已经添加过了",
+      "reauth_successful": "重新授权成功",
+      "reauth_failed": "重新授权失败，请重新添加账号"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "微信流量主设置",
+        "description": "流量主数据每天上午更新一次，更新间隔不必设置得太短。",
+        "data": {
+          "scan_interval": "更新间隔",
+          "lookback_days": "历史数据天数",
+          "fetch_settlement": "同时获取结算数据"
+        },
+        "data_description": {
+          "scan_interval": "默认 1 小时；建议不低于 0.5 小时，避免触发接口频率限制",
+          "lookback_days": "传感器内部缓存的天数，影响「近 30 天」「收益趋势」等数据，最大 90 天",
+          "fetch_settlement": "关闭后不请求结算接口，累计收入 / 已结算收入传感器将变为未知"
+        }
+      }
+    }
+  },
+  "selector": {
+    "account_type": {
+      "options": {
+        "official": "公众号",
+        "miniprogram": "小程序 / 小游戏"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "yesterday_income": {
+        "name": "昨日收入"
+      },
+      "yesterday_exposure": {
+        "name": "昨日曝光量"
+      },
+      "yesterday_clicks": {
+        "name": "昨日点击量"
+      },
+      "yesterday_click_rate": {
+        "name": "昨日点击率"
+      },
+      "yesterday_ecpm": {
+        "name": "昨日 eCPM"
+      },
+      "yesterday_req": {
+        "name": "昨日广告拉取量"
+      },
+      "income_7d": {
+        "name": "近 7 天收入"
+      },
+      "income_30d": {
+        "name": "近 30 天收入"
+      },
+      "income_month": {
+        "name": "本月收入"
+      },
+      "income_total": {
+        "name": "累计收入"
+      },
+      "income_settled": {
+        "name": "已结算收入"
+      },
+      "income_pending": {
+        "name": "待结算收入"
+      },
+      "data_date": {
+        "name": "数据日期"
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "立即刷新",
+      "description": "立即从微信拉取一次数据，不等待下一个轮询周期。",
+      "fields": {
+        "entry_id": {
+          "name": "账号",
+          "description": "留空表示刷新全部账号"
+        }
+      }
+    },
+    "get_report": {
+      "name": "生成收益报表",
+      "description": "生成可直接推送到微信 / 邮件的收益报表文本，并返回结构化数据。",
+      "fields": {
+        "entry_id": {
+          "name": "账号",
+          "description": "留空表示汇总全部账号"
+        },
+        "days": {
+          "name": "统计天数",
+          "description": "1 表示只统计昨日，7 / 30 表示近 N 天，最大 90"
+        }
+      }
+    }
+  }
+}

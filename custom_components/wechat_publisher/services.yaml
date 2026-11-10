@@ -1,0 +1,23 @@
+refresh:
+  fields:
+    entry_id:
+      required: false
+      selector:
+        text:
+
+get_report:
+  fields:
+    entry_id:
+      required: false
+      selector:
+        text:
+    days:
+      required: false
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 90
+          step: 1
+          mode: box
+          unit_of_measurement: 天

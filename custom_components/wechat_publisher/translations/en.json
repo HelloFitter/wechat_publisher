@@ -1,0 +1,138 @@
+{
+  "title": "WeChat Publisher",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add a WeChat Publisher account",
+        "description": "Enter the AppID and AppSecret of your Official Account or Mini Program.\n\n⚠️ Add the outbound IP of your Home Assistant server to WeChat's IP whitelist first (Settings & Development → Basic Configuration → IP Whitelist). The IP detected just now is: **{ip}**\n\nAdd one entry per account; you can add as many as you like.",
+        "data": {
+          "account_name": "Account name",
+          "account_type": "Account type",
+          "appid": "AppID",
+          "appsecret": "AppSecret"
+        },
+        "data_description": {
+          "account_name": "Only used to tell accounts apart inside Home Assistant",
+          "account_type": "Choose Official Account or Mini Program",
+          "appid": "AppID from Settings & Development → Basic Configuration",
+          "appsecret": "AppSecret on the same page; it is only shown once"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate",
+        "description": "The credentials for **{name}** (AppID: {appid}) are no longer valid. Enter the AppSecret again.\n\nIf you see an IP whitelist error, add **{ip}** to the IP whitelist in the WeChat console.",
+        "data": {
+          "appsecret": "AppSecret"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid AppID or AppSecret",
+      "invalid_ip": "Server IP {ip} is not in the IP whitelist. Add it in the WeChat console and retry",
+      "not_publisher": "This account has not enabled the Publisher (流量主) programme yet",
+      "rate_limited": "WeChat API rate limit reached, please try again later",
+      "cannot_connect": "Unable to reach the WeChat API, check your network",
+      "unknown": "Unexpected error, check the Home Assistant logs"
+    },
+    "abort": {
+      "already_configured": "This AppID has already been added",
+      "reauth_successful": "Re-authentication successful",
+      "reauth_failed": "Re-authentication failed, please add the account again"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "WeChat Publisher options",
+        "description": "Revenue data is updated once every morning, so a long polling interval is fine.",
+        "data": {
+          "scan_interval": "Update interval",
+          "lookback_days": "History window",
+          "fetch_settlement": "Fetch settlement data"
+        },
+        "data_description": {
+          "scan_interval": "Default 1 hour; keep it above 0.5 hour to avoid rate limits",
+          "lookback_days": "Days of data cached in memory, used by the 7/30 day and trend sensors (max 90)",
+          "fetch_settlement": "When disabled, total and settled income sensors become unknown"
+        }
+      }
+    }
+  },
+  "selector": {
+    "account_type": {
+      "options": {
+        "official": "Official Account",
+        "miniprogram": "Mini Program"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "yesterday_income": {
+        "name": "Yesterday income"
+      },
+      "yesterday_exposure": {
+        "name": "Yesterday impressions"
+      },
+      "yesterday_clicks": {
+        "name": "Yesterday clicks"
+      },
+      "yesterday_click_rate": {
+        "name": "Yesterday CTR"
+      },
+      "yesterday_ecpm": {
+        "name": "Yesterday eCPM"
+      },
+      "yesterday_req": {
+        "name": "Yesterday ad requests"
+      },
+      "income_7d": {
+        "name": "Income last 7 days"
+      },
+      "income_30d": {
+        "name": "Income last 30 days"
+      },
+      "income_month": {
+        "name": "Income this month"
+      },
+      "income_total": {
+        "name": "Total income"
+      },
+      "income_settled": {
+        "name": "Settled income"
+      },
+      "income_pending": {
+        "name": "Pending income"
+      },
+      "data_date": {
+        "name": "Data date"
+      }
+    }
+  },
+  "services": {
+    "refresh": {
+      "name": "Refresh now",
+      "description": "Fetch fresh data from WeChat immediately.",
+      "fields": {
+        "entry_id": {
+          "name": "Account",
+          "description": "Leave empty to refresh every account"
+        }
+      }
+    },
+    "get_report": {
+      "name": "Build report",
+      "description": "Build a ready-to-push revenue report and return structured data.",
+      "fields": {
+        "entry_id": {
+          "name": "Account",
+          "description": "Leave empty to aggregate every account"
+        },
+        "days": {
+          "name": "Days",
+          "description": "1 for yesterday only, 7/30 for the last N days (max 90)"
+        }
+      }
+    }
+  }
+}
